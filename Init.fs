@@ -38,7 +38,9 @@ module Init =
         Path.Combine(gamePath.Value, "steamapps", "common", "Subnautica")
 
     let private createConfigFile () =
-        let config: InstallMod.AquaConfig = { game_path = getGamePath () }
+        let config: InstallMod.AquaConfig =
+            { game_path = getGamePath ()
+              api_key = "" }
 
         let configPath = Path.Combine(Storage.getStorageDir (), "config.json")
         Storage.saveJsonData configPath config

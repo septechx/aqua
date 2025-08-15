@@ -26,12 +26,15 @@ module Unzip =
         try
             ZipFile.ExtractToDirectory(zipPath, temp)
 
+            // TODO: Replace this with fuzzy search or something similar
             let matches =
-                Directory.EnumerateDirectories(temp, dirName, SearchOption.AllDirectories)
+                Directory.EnumerateDirectories(temp, "*", SearchOption.AllDirectories)
+                |> Seq.filter (fun dir ->
+                    Path.GetFileName(dir).StartsWith(dirName.Substring(0, 5), StringComparison.OrdinalIgnoreCase))
                 |> Seq.toList
 
             match matches with
-            | [] -> failwithf "Directory named '%s' not found inside zip" dirName
+            | [] -> failwithf "No directory starting with '%s' found inside zip" dirName
 
             | [ single ] ->
                 let ensureDestination () =

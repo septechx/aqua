@@ -11,27 +11,12 @@ module NexusApi =
         { file_id: int
           name: string
           version: string
-          category_id: int
-          category_name: string
-          is_primary: bool
-          size: int
           file_name: string
-          uploaded_timestamp: int
-          uploaded_time: string
-          mod_version: string
-          external_virus_scan_url: string
-          description: string
-          size_kb: int
-          size_in_bytes: int
-          changelog_html: string
-          content_preview_link: string }
+          mod_version: string }
 
     type NexusModFiles = { files: NexusModFile list }
 
-    type NexusDownloadLink =
-        { name: string
-          short_name: string
-          URI: string }
+    type NexusDownloadLink = { URI: string }
 
     let private makeRequest (path: string, apiKey: string) =
         let client = new HttpClient()
@@ -54,15 +39,6 @@ module NexusApi =
 
         response
 
-    let validate () =
-        let apiKey = DotEnv.get "NEXUS_API_KEY"
-
-        let response = makeRequest ("/v1/users/validate.json", apiKey)
-
-        response.Content.ReadAsStringAsync()
-        |> Async.AwaitTask
-        |> Async.RunSynchronously
-
     let getFiles (apiKey: string, modId: int) =
         let response =
             makeRequest (sprintf "/v1/games/subnautica/mods/%d/files.json" modId, apiKey)
@@ -74,6 +50,18 @@ module NexusApi =
 
         let options = JsonSerializerOptions(PropertyNameCaseInsensitive = true)
         JsonSerializer.Deserialize<NexusModFiles>(jsonString, options).files
+
+    let getFile (apiKey: string, modId: int, fileId: int) =
+        let response =
+            makeRequest (sprintf "/v1/games/subnautica/mods/%d/files/%d.json" modId fileId, apiKey)
+
+        let jsonString =
+            response.Content.ReadAsStringAsync()
+            |> Async.AwaitTask
+            |> Async.RunSynchronously
+
+        let options = JsonSerializerOptions(PropertyNameCaseInsensitive = true)
+        JsonSerializer.Deserialize<NexusModFile>(jsonString, options)
 
     let getDownloadLink (apiKey: string, modId: int, fileId: int, expires: string, key: string) =
         let response =

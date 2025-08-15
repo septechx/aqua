@@ -23,7 +23,7 @@ module Cli =
                 Path.Combine(Storage.getStorageDir (), "config.json")
                 |> Storage.loadJsonData<InstallMod.AquaConfig>
 
-            if not (File.Exists(Path.Combine(aquaConfig.game_path, "BepInEx"))) then
+            if not (Directory.Exists(Path.Combine(aquaConfig.game_path, "BepInEx"))) then
                 failwith "BepInEx is not installed. Please install BepInEx first."
 
             match args.TryGetResult <@ Mods @> with
@@ -41,13 +41,11 @@ module Cli =
         | [<AltCommandLine("-v")>] Version
         | [<AltCommandLine("i"); CliPrefix(CliPrefix.None)>] Install of ParseResults<Install.InstallArgs>
         | [<CliPrefix(CliPrefix.None)>] Init
-        | [<CliPrefix(CliPrefix.None)>] Validate
 
         interface IArgParserTemplate with
             member this.Usage =
                 match this with
                 | Version -> "display version information."
-                | Validate -> "validate api key"
                 | Install _ -> "install mods"
                 | Init -> "initialize aqua"
 
@@ -71,11 +69,6 @@ module Cli =
             0
         | p when p.Contains(Install) ->
             Install.run (p.GetResult(Install))
-            0
-        | p when p.Contains(Validate) ->
-            printfn "Validating API key..."
-            let response = NexusApi.validate ()
-            printfn "%s" response
             0
         | p when p.Contains(Init) ->
             Init.init ()

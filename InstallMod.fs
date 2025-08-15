@@ -7,7 +7,7 @@ module InstallMod =
 
     type InstalledMod = { name: string; version: string }
 
-    type AquaConfig = { game_path: string }
+    type AquaConfig = { game_path: string; api_key: string }
 
     let private getLatestFile (files: NexusModFile list) : NexusModFile option =
         let tryParseSemVer (version: string) =
@@ -27,11 +27,13 @@ module InstallMod =
         |> Option.map snd
 
     let install (mxm: string) =
-        let apiKey = DotEnv.get "NEXUS_API_KEY"
+        let config =
+            Path.Combine(Storage.getStorageDir (), "config.json")
+            |> Storage.loadJsonData<AquaConfig>
 
         let parsedMxm = MxmParser.parseNxmUri mxm
 
-        let file = getFiles (apiKey, parsedMxm.ModId.Value) |> getLatestFile |> Option.get
+        let file = getFile (config.api_key, parsedMxm.ModId.Value, parsedMxm.FileId.Value)
 
         let modsFile = "installed-mods.json"
 
@@ -46,7 +48,7 @@ module InstallMod =
 
         let resultPath =
             NexusApi.getDownloadLink (
-                apiKey,
+                config.api_key,
                 parsedMxm.ModId.Value,
                 file.file_id,
                 parsedMxm.Params.["expires"],
