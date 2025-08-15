@@ -50,6 +50,10 @@ module InstallMod =
 
         let destPath = Path.Combine(config.game_path, "BepInEx", "plugins", file.name)
 
+        // Delete the old symlink when updating the mod
+        if Directory.Exists destPath then
+            Directory.Delete(destPath, true)
+
         File.CreateSymbolicLink(destPath, modPath) |> ignore
 
         let modsFile = "installed-mods.json"
