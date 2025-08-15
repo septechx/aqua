@@ -7,6 +7,32 @@ module NexusApi =
 
     let baseUrl = "https://api.nexusmods.com"
 
+    type NexusModInfo =
+        { name: string
+          summary: string
+          description: string
+          picture_url: string
+          mod_downloads: int
+          mod_unique_downloads: int
+          uid: int
+          mod_id: int
+          game_id: int
+          allow_rating: bool
+          domain_name: string
+          category_id: int
+          version: string
+          endorsement_count: int
+          created_timestamp: int
+          created_time: string
+          updated_timestamp: int
+          updated_time: string
+          author: string
+          uploaded_by: string
+          uploaded_users_profile_url: string
+          contains_adult_content: bool
+          status: string
+          available: bool }
+
     type NexusModFile =
         { file_id: int
           name: string
@@ -38,6 +64,18 @@ module NexusApi =
             failwithf "HTTP Error: %d" (int response.StatusCode)
 
         response
+
+    let getModInfo (apiKey: string, modId: int) =
+        let response =
+            makeRequest (sprintf "/v1/games/subnautica/mods/%d.json" modId, apiKey)
+
+        let jsonString =
+            response.Content.ReadAsStringAsync()
+            |> Async.AwaitTask
+            |> Async.RunSynchronously
+
+        let options = JsonSerializerOptions(PropertyNameCaseInsensitive = true)
+        JsonSerializer.Deserialize<NexusModInfo>(jsonString, options)
 
     let getFiles (apiKey: string, modId: int) =
         let response =

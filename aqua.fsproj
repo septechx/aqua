@@ -23,6 +23,8 @@
     <Compile Include="Unzip.fs" />
     <Compile Include="InstallMod.fs" />
     <Compile Include="Init.fs" />
+    <Compile Include="ListMods.fs" />
+    <Compile Include="ToggleMod.fs" />
     <Compile Include="Cli.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>

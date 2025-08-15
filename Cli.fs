@@ -49,6 +49,57 @@ module Cli =
             | None -> raise (ArgumentException(message = "No api key specified", paramName = "api_key"))
             | Some key -> Init.init (key)
 
+    module ListMods =
+        open Argu
+
+        type ListArgs =
+            | [<Hidden>] Z
+
+            interface IArgParserTemplate with
+                member this.Usage =
+                    match this with
+                    | _ -> ""
+
+        let run () = ListMods.list ()
+
+    module EnableMod =
+        open System
+        open Argu
+
+        type EnableArgs =
+            | [<Mandatory; MainCommand>] Mods of mod_name: string list
+
+            interface IArgParserTemplate with
+                member this.Usage =
+                    match this with
+                    | Mods _ -> "mods to enable"
+
+        let run (args: ParseResults<EnableArgs>) =
+            match args.TryGetResult <@ Mods @> with
+            | None -> raise (ArgumentException(message = "No mod specified", paramName = "mod"))
+            | Some modNames ->
+                for modName in modNames do
+                    ToggleMod.enable (modName)
+
+    module DisableMod =
+        open System
+        open Argu
+
+        type DisableArgs =
+            | [<Mandatory; MainCommand>] Mods of mod_anme: string list
+
+            interface IArgParserTemplate with
+                member this.Usage =
+                    match this with
+                    | Mods _ -> "mods to disable"
+
+        let run (args: ParseResults<DisableArgs>) =
+            match args.TryGetResult <@ Mods @> with
+            | None -> raise (ArgumentException(message = "No mod specified", paramName = "mod"))
+            | Some modNames ->
+                for modName in modNames do
+                    ToggleMod.disable (modName)
+
     open System
     open Argu
 
@@ -57,6 +108,9 @@ module Cli =
     type CmdArgs =
         | [<AltCommandLine("-v")>] Version
         | [<CliPrefix(CliPrefix.None); AltCommandLine("i")>] Install of ParseResults<Install.InstallArgs>
+        | [<CliPrefix(CliPrefix.None); AltCommandLine("l")>] List of ParseResults<ListMods.ListArgs>
+        | [<CliPrefix(CliPrefix.None); AltCommandLine("e")>] Enable of ParseResults<EnableMod.EnableArgs>
+        | [<CliPrefix(CliPrefix.None); AltCommandLine("d")>] Disable of ParseResults<DisableMod.DisableArgs>
         | [<CliPrefix(CliPrefix.None)>] Init of ParseResults<Init.InitArgs>
 
         interface IArgParserTemplate with
@@ -64,6 +118,9 @@ module Cli =
                 match this with
                 | Version -> "display version information."
                 | Install _ -> "install mods"
+                | List _ -> "list installed mods"
+                | Enable _ -> "enable mods"
+                | Disable _ -> "disable mods"
                 | Init _ -> "initialize aqua"
 
     let private printVersion () = printfn "aqua v%s" application_version
@@ -89,6 +146,15 @@ module Cli =
             0
         | p when p.Contains(Init) ->
             Init.run (p.GetResult(Init))
+            0
+        | p when p.Contains(List) ->
+            ListMods.run ()
+            0
+        | p when p.Contains(Enable) ->
+            EnableMod.run (p.GetResult(Enable))
+            0
+        | p when p.Contains(Disable) ->
+            DisableMod.run (p.GetResult(Disable))
             0
         | _ ->
             printfn "%s" (parser.PrintUsage())

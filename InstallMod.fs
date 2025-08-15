@@ -5,7 +5,13 @@ module InstallMod =
     open Semver
     open System.IO
 
-    type InstalledMod = { name: string; version: string }
+    type InstalledMod =
+        { name: string
+          version: string
+          friendly_name: string
+          enabled: bool
+          source_path: string
+          destination_path: string }
 
     type AquaConfig = { game_path: string; api_key: string }
 
@@ -33,18 +39,9 @@ module InstallMod =
 
         let parsedMxm = MxmParser.parseNxmUri mxm
 
+        let modInfo = getModInfo (config.api_key, parsedMxm.ModId.Value)
+
         let file = getFile (config.api_key, parsedMxm.ModId.Value, parsedMxm.FileId.Value)
-
-        let modsFile = "installed-mods.json"
-
-        if Path.Combine(Storage.getStorageDir (), modsFile) |> File.Exists then
-            Storage.loadJsonData<InstalledMod list> modsFile
-            |> List.filter (fun m -> m.name <> file.name)
-        else
-            []
-        @ [ { name = file.name
-              version = file.version } ]
-        |> Storage.saveJsonData modsFile
 
         let resultPath =
             NexusApi.getDownloadLink (
@@ -66,7 +63,21 @@ module InstallMod =
             Path.Combine(Storage.getStorageDir (), "config.json")
             |> Storage.loadJsonData<AquaConfig>
 
-        File.CreateSymbolicLink(Path.Combine(aquaConfig.game_path, "BepInEx", "plugins", file.name), modPath)
-        |> ignore
+        let destPath = Path.Combine(aquaConfig.game_path, "BepInEx", "plugins", file.name)
 
-        ()
+        File.CreateSymbolicLink(destPath, modPath) |> ignore
+
+        let modsFile = "installed-mods.json"
+
+        if Path.Combine(Storage.getStorageDir (), modsFile) |> File.Exists then
+            Storage.loadJsonData<InstalledMod list> modsFile
+            |> List.filter (fun m -> m.name <> file.name)
+        else
+            []
+        @ [ { name = file.name
+              version = file.version
+              friendly_name = modInfo.name
+              enabled = true
+              source_path = modPath
+              destination_path = destPath } ]
+        |> Storage.saveJsonData modsFile
