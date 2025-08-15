@@ -5,6 +5,8 @@
 
 Aqua is a simple CLI tool for managing subnautica mods on linux.
 
+Warning: Aqua is still in development and may not work as expected. Minor updates may break your configuration.
+
 ## Features
 
 - [x] Install mods from Nexus
