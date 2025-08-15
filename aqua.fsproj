@@ -16,21 +16,21 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="Colors.fs" />
-    <Compile Include="Storage.fs" />
-    <Compile Include="Metadata.fs" />
-    <Compile Include="AquaConfig.fs" />
-    <Compile Include="NexusApi.fs" />
-    <Compile Include="MxmParser.fs" />
-    <Compile Include="Unzip.fs" />
-    <Compile Include="InstallMod.fs" />
-    <Compile Include="Init.fs" />
-    <Compile Include="ListMods.fs" />
-    <Compile Include="ToggleMod.fs" />
-    <Compile Include="CheckUpdates.fs" />
-    <Compile Include="Refresh.fs" />
-    <Compile Include="Cli.fs" />
-    <Compile Include="Program.fs" />
+    <Compile Include="src/Colors.fs" />
+    <Compile Include="src/Storage.fs" />
+    <Compile Include="src/Metadata.fs" />
+    <Compile Include="src/AquaConfig.fs" />
+    <Compile Include="src/NexusApi.fs" />
+    <Compile Include="src/MxmParser.fs" />
+    <Compile Include="src/Unzip.fs" />
+    <Compile Include="src/InstallMod.fs" />
+    <Compile Include="src/Init.fs" />
+    <Compile Include="src/ListMods.fs" />
+    <Compile Include="src/ToggleMod.fs" />
+    <Compile Include="src/CheckUpdates.fs" />
+    <Compile Include="src/Refresh.fs" />
+    <Compile Include="src/Cli.fs" />
+    <Compile Include="src/Program.fs" />
   </ItemGroup>
 
   <ItemGroup>
