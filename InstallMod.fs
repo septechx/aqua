@@ -4,16 +4,7 @@ module InstallMod =
     open NexusApi
     open Semver
     open System.IO
-
-    type InstalledMod =
-        { name: string
-          version: string
-          friendly_name: string
-          enabled: bool
-          source_path: string
-          destination_path: string }
-
-    type AquaConfig = { game_path: string; api_key: string }
+    open AquaConfig
 
     let private getLatestFile (files: NexusModFile list) : NexusModFile option =
         let tryParseSemVer (version: string) =
@@ -33,9 +24,7 @@ module InstallMod =
         |> Option.map snd
 
     let install (mxm: string) =
-        let config =
-            Path.Combine(Storage.getStorageDir (), "config.json")
-            |> Storage.loadJsonData<AquaConfig>
+        let config = AquaConfig.getConfig ()
 
         let parsedMxm = MxmParser.parseNxmUri mxm
 
@@ -44,24 +33,22 @@ module InstallMod =
         let file = getFile config.api_key parsedMxm.ModId.Value parsedMxm.FileId.Value
 
         let resultPath =
-            getDownloadLink
-                config.api_key
-                parsedMxm.ModId.Value
-                file.file_id
-                parsedMxm.Params.["key"]
-                parsedMxm.Params.["expires"]
-            |> NexusApi.downloadZipAsync (sprintf "%s-%s.zip" file.name file.version)
+            sprintf "%s-%s.zip" file.name file.version
+            |> NexusApi.downloadZipAsync (
+                NexusApi.getDownloadLink
+                    config.api_key
+                    parsedMxm.ModId.Value
+                    parsedMxm.FileId.Value
+                    parsedMxm.Params.["expires"]
+                    parsedMxm.Params.["key"]
+            )
             |> Async.RunSynchronously
 
         let modPath = Path.Combine(Storage.getStorageDir (), file.name)
 
         Unzip.moveDirFromZip resultPath file.name modPath true
 
-        let aquaConfig =
-            Path.Combine(Storage.getStorageDir (), "config.json")
-            |> Storage.loadJsonData<AquaConfig>
-
-        let destPath = Path.Combine(aquaConfig.game_path, "BepInEx", "plugins", file.name)
+        let destPath = Path.Combine(config.game_path, "BepInEx", "plugins", file.name)
 
         File.CreateSymbolicLink(destPath, modPath) |> ignore
 

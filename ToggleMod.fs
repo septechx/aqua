@@ -2,14 +2,14 @@ namespace Aqua
 
 module ToggleMod =
     open System.IO
-
+    open AquaConfig
 
     let enable (modName: string) =
         let modsFile = "installed-mods.json"
         let modsPath = Path.Combine(Storage.getStorageDir (), modsFile)
 
         if File.Exists modsPath then
-            Storage.loadJsonData<InstallMod.InstalledMod list> modsPath
+            Storage.loadJsonData<InstalledMod list> modsPath
             |> List.map (fun m ->
                 if m.friendly_name = modName then
                     File.CreateSymbolicLink(m.destination_path, m.source_path) |> ignore
@@ -27,7 +27,7 @@ module ToggleMod =
         let modsPath = Path.Combine(Storage.getStorageDir (), modsFile)
 
         if File.Exists modsPath then
-            Storage.loadJsonData<InstallMod.InstalledMod list> modsPath
+            Storage.loadJsonData<InstalledMod list> modsPath
             |> List.map (fun m ->
                 if m.friendly_name = modName then
                     File.Delete(m.destination_path) |> ignore

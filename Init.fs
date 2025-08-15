@@ -4,6 +4,7 @@ module Init =
     open System
     open System.IO
     open System.Text.RegularExpressions
+    open AquaConfig
 
     // Obtain the library path to no write a parser
     let extractSteamPaths (vdfContent: string) =
@@ -38,12 +39,10 @@ module Init =
         Path.Combine(gamePath.Value, "steamapps", "common", "Subnautica")
 
     let private createConfigFile (apikey: string) =
-        let config: InstallMod.AquaConfig =
-            { game_path = getGamePath ()
-              api_key = apikey }
+        { game_path = getGamePath ()
+          api_key = apikey }
+        |> AquaConfig.writeConfig
 
-        let configPath = Path.Combine(Storage.getStorageDir (), "config.json")
-        Storage.saveJsonData configPath config
 
     let init (apikey: string) =
         if not (File.Exists(Path.Combine(Storage.getStorageDir (), "config.json"))) then

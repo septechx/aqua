@@ -7,31 +7,7 @@ module NexusApi =
 
     let baseUrl = "https://api.nexusmods.com"
 
-    type NexusModInfo =
-        { name: string
-          summary: string
-          description: string
-          picture_url: string
-          mod_downloads: int
-          mod_unique_downloads: int
-          uid: int
-          mod_id: int
-          game_id: int
-          allow_rating: bool
-          domain_name: string
-          category_id: int
-          version: string
-          endorsement_count: int
-          created_timestamp: int
-          created_time: string
-          updated_timestamp: int
-          updated_time: string
-          author: string
-          uploaded_by: string
-          uploaded_users_profile_url: string
-          contains_adult_content: bool
-          status: string
-          available: bool }
+    type NexusModInfo = { name: string }
 
     type NexusModFile =
         { file_id: int
@@ -44,7 +20,7 @@ module NexusApi =
 
     type NexusDownloadLink = { URI: string }
 
-    let private makeRequest (path: string) (apiKey: string) =
+    let private makeRequest (apiKey: string) (path: string) =
         let client = new HttpClient()
         let url = sprintf "%s%s" baseUrl path
         let request = new HttpRequestMessage(HttpMethod.Get, url)
@@ -61,7 +37,12 @@ module NexusApi =
             client.SendAsync(request) |> Async.AwaitTask |> Async.RunSynchronously
 
         if not response.IsSuccessStatusCode then
-            failwithf "HTTP Error: %d" (int response.StatusCode)
+            failwithf
+                "HTTP Error: %d:\n%s"
+                (int response.StatusCode)
+                (response.Content.ReadAsStringAsync()
+                 |> Async.AwaitTask
+                 |> Async.RunSynchronously)
 
         response
 
@@ -79,7 +60,7 @@ module NexusApi =
 
     let getFiles (apiKey: string) (modId: int) =
         let response =
-            modId |> sprintf "/v1/games/subnautica/mods/%d/files.json" |> makeRequest apiKey
+            sprintf "/v1/games/subnautica/mods/%d/files.json" modId |> makeRequest apiKey
 
         let jsonString =
             response.Content.ReadAsStringAsync()
@@ -111,7 +92,6 @@ module NexusApi =
                 key
                 expires
             |> makeRequest apiKey
-
 
         let jsonString =
             response.Content.ReadAsStringAsync()

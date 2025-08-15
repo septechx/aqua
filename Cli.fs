@@ -6,6 +6,7 @@ module Cli =
         open System.IO
         open Argu
         open Storage
+        open AquaConfig
 
         type InstallArgs =
             | [<Mandatory; MainCommand>] Mods of mxm_link: string list
@@ -21,7 +22,7 @@ module Cli =
 
             let aquaConfig =
                 Path.Combine(Storage.getStorageDir (), "config.json")
-                |> Storage.loadJsonData<InstallMod.AquaConfig>
+                |> Storage.loadJsonData<AquaConfig>
 
             if not (Directory.Exists(Path.Combine(aquaConfig.game_path, "BepInEx"))) then
                 failwith "BepInEx is not installed. Please install BepInEx first."
