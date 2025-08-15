@@ -5,9 +5,19 @@ module DotEnv =
     open System.IO
 
     let private parseLine (line: string) =
-        match line.Split('=', StringSplitOptions.RemoveEmptyEntries) with
-        | args when args.Length = 2 -> Environment.SetEnvironmentVariable(args.[0], args.[1])
-        | _ -> ()
+        match line.Split('=') with
+        | args ->
+            Environment.SetEnvironmentVariable(
+                args.[0],
+                args.[1..]
+                |> String.concat "="
+                |> fun s ->
+                    if s.StartsWith '"' && s.EndsWith '"' then
+                        s.Substring(1, s.Length - 2)
+                    else
+                        s
+
+            )
 
     let private load () =
         lazy
@@ -19,5 +29,7 @@ module DotEnv =
              |> function
                  | false -> Console.WriteLine "No .env file found."
                  | true -> filePath |> File.ReadAllLines |> Seq.iter parseLine)
+
+    let get key = Environment.GetEnvironmentVariable key
 
     let init = load().Value

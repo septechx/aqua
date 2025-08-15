@@ -3,16 +3,27 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net9.0</TargetFramework>
+    <ToolCommandName>aqua</ToolCommandName>
+    <PackAsTool>true</PackAsTool>
   </PropertyGroup>
 
   <ItemGroup>
     <Compile Include="DotEnv.fs" />
+    <Compile Include="Config.fs" />
+    <Compile Include="Storage.fs" />
+    <Compile Include="NexusApi.fs" />
+    <Compile Include="MxmParser.fs" />
+    <Compile Include="Unzip.fs" />
+    <Compile Include="InstallMod.fs" />
     <Compile Include="Cli.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="CommandLineParser.FSharp" Version="2.9.1" />
+    <PackageReference Include="Argu" Version="6.2.5" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.8" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.8" />
+    <PackageReference Include="SemVer" Version="3.0.0" />
   </ItemGroup>
 
 </Project>
