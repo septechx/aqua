@@ -3,7 +3,7 @@
 </div>
 <br />
 
-Aqua is a simple CLI tool for managing subnautica mods.
+Aqua is a simple CLI tool for managing subnautica 2.0+ mods.
 
 **Warning: Aqua is still in development and may not work as expected. Minor updates might break your configuration.**
 
