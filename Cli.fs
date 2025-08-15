@@ -85,7 +85,7 @@ module Cli =
         open Argu
 
         type DisableArgs =
-            | [<Mandatory; MainCommand>] Mods of mod_anme: string list
+            | [<Mandatory; MainCommand>] Mods of mod_name: string list
 
             interface IArgParserTemplate with
                 member this.Usage =
@@ -112,10 +112,23 @@ module Cli =
 
         let run () = CheckUpdates.check ()
 
+    module Refresh =
+        open Argu
+
+        type RefreshArgs =
+            | [<Hidden>] Z
+
+            interface IArgParserTemplate with
+                member this.Usage =
+                    match this with
+                    | _ -> ""
+
+        let run () = Refresh.refresh ()
+
     open System
     open Argu
 
-    let application_version = Config.config.["Application:Version"]
+    let application_version = Metadata.config.["Application:Version"]
 
     type CmdArgs =
         | [<AltCommandLine("-v")>] Version
@@ -124,6 +137,7 @@ module Cli =
         | [<CliPrefix(CliPrefix.None); AltCommandLine("e")>] Enable of ParseResults<EnableMod.EnableArgs>
         | [<CliPrefix(CliPrefix.None); AltCommandLine("d")>] Disable of ParseResults<DisableMod.DisableArgs>
         | [<CliPrefix(CliPrefix.None); AltCommandLine("u")>] Update of ParseResults<CheckUpdates.ListArgs>
+        | [<CliPrefix(CliPrefix.None); AltCommandLine("r")>] Refresh of ParseResults<Refresh.RefreshArgs>
         | [<CliPrefix(CliPrefix.None)>] Init of ParseResults<Init.InitArgs>
 
         interface IArgParserTemplate with
@@ -135,6 +149,7 @@ module Cli =
                 | Enable _ -> "enable mods"
                 | Disable _ -> "disable mods"
                 | Update _ -> "check for updates"
+                | Refresh _ -> "refresh installed mods"
                 | Init _ -> "initialize aqua"
 
     let private printVersion () = printfn "aqua v%s" application_version
@@ -172,6 +187,9 @@ module Cli =
             0
         | p when p.Contains(Update) ->
             CheckUpdates.run ()
+            0
+        | p when p.Contains(Refresh) ->
+            Refresh.run ()
             0
         | _ ->
             printfn "%s" (parser.PrintUsage())

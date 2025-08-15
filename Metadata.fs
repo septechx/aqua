@@ -1,6 +1,6 @@
 namespace Aqua
 
-module Config =
+module Metadata =
     open System.IO
     open Microsoft.Extensions.Configuration
 

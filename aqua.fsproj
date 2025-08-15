@@ -18,7 +18,7 @@
   <ItemGroup>
     <Compile Include="Colors.fs" />
     <Compile Include="Storage.fs" />
-    <Compile Include="Config.fs" />
+    <Compile Include="Metadata.fs" />
     <Compile Include="AquaConfig.fs" />
     <Compile Include="NexusApi.fs" />
     <Compile Include="MxmParser.fs" />
@@ -28,6 +28,7 @@
     <Compile Include="ListMods.fs" />
     <Compile Include="ToggleMod.fs" />
     <Compile Include="CheckUpdates.fs" />
+    <Compile Include="Refresh.fs" />
     <Compile Include="Cli.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>

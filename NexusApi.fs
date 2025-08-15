@@ -25,12 +25,12 @@ module NexusApi =
         let url = sprintf "%s%s" baseUrl path
         let request = new HttpRequestMessage(HttpMethod.Get, url)
         request.Headers.Add("apikey", apiKey)
-        request.Headers.Add("Application-Name", Config.config.["Application:Name"])
-        request.Headers.Add("Application-Version", Config.config.["Application:Version"])
+        request.Headers.Add("Application-Name", Metadata.config.["Application:Name"])
+        request.Headers.Add("Application-Version", Metadata.config.["Application:Version"])
 
         request.Headers.Add(
             "User-Agent",
-            sprintf "%s/%s" (Config.config.["Application:Name"]) (Config.config.["Application:Version"])
+            sprintf "%s/%s" (Metadata.config.["Application:Name"]) (Metadata.config.["Application:Version"])
         )
 
         let response =
@@ -110,12 +110,12 @@ module NexusApi =
             use http = new HttpClient()
 
             use request = new HttpRequestMessage(HttpMethod.Get, url)
-            request.Headers.Add("Application-Name", Config.config.["Application:Name"])
-            request.Headers.Add("Application-Version", Config.config.["Application:Version"])
+            request.Headers.Add("Application-Name", Metadata.config.["Application:Name"])
+            request.Headers.Add("Application-Version", Metadata.config.["Application:Version"])
 
             request.Headers.Add(
                 "User-Agent",
-                sprintf "%s/%s" (Config.config.["Application:Name"]) (Config.config.["Application:Version"])
+                sprintf "%s/%s" (Metadata.config.["Application:Name"]) (Metadata.config.["Application:Version"])
             )
 
             use! response =
