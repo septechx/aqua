@@ -39,25 +39,23 @@ module InstallMod =
 
         let parsedMxm = MxmParser.parseNxmUri mxm
 
-        let modInfo = getModInfo (config.api_key, parsedMxm.ModId.Value)
+        let modInfo = getModInfo config.api_key parsedMxm.ModId.Value
 
-        let file = getFile (config.api_key, parsedMxm.ModId.Value, parsedMxm.FileId.Value)
+        let file = getFile config.api_key parsedMxm.ModId.Value parsedMxm.FileId.Value
 
         let resultPath =
-            NexusApi.getDownloadLink (
-                config.api_key,
-                parsedMxm.ModId.Value,
-                file.file_id,
-                parsedMxm.Params.["expires"],
+            getDownloadLink
+                config.api_key
+                parsedMxm.ModId.Value
+                file.file_id
                 parsedMxm.Params.["key"]
-            )
-            |> fun downloadLink ->
-                NexusApi.downloadZipAsync (downloadLink, sprintf "%s-%s.zip" file.name file.version)
-                |> Async.RunSynchronously
+                parsedMxm.Params.["expires"]
+            |> NexusApi.downloadZipAsync (sprintf "%s-%s.zip" file.name file.version)
+            |> Async.RunSynchronously
 
         let modPath = Path.Combine(Storage.getStorageDir (), file.name)
 
-        Unzip.moveDirFromZip (resultPath, file.name, modPath, true)
+        Unzip.moveDirFromZip resultPath file.name modPath true
 
         let aquaConfig =
             Path.Combine(Storage.getStorageDir (), "config.json")

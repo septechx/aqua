@@ -16,7 +16,7 @@ module Unzip =
             let nextDst = Path.Combine(dst, Path.GetFileName(d))
             copyDirRecursive d nextDst
 
-    let moveDirFromZip (zipPath: string, dirName: string, destination: string, overwrite: bool) =
+    let moveDirFromZip (zipPath: string) (dirName: string) (destination: string) (overwrite: bool) =
         if not (File.Exists zipPath) then
             invalidArg "zipPath" (sprintf "Zip file not found: %s" zipPath)
 

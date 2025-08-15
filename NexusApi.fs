@@ -44,7 +44,7 @@ module NexusApi =
 
     type NexusDownloadLink = { URI: string }
 
-    let private makeRequest (path: string, apiKey: string) =
+    let private makeRequest (path: string) (apiKey: string) =
         let client = new HttpClient()
         let url = sprintf "%s%s" baseUrl path
         let request = new HttpRequestMessage(HttpMethod.Get, url)
@@ -65,9 +65,9 @@ module NexusApi =
 
         response
 
-    let getModInfo (apiKey: string, modId: int) =
+    let getModInfo (apiKey: string) (modId: int) =
         let response =
-            makeRequest (sprintf "/v1/games/subnautica/mods/%d.json" modId, apiKey)
+            sprintf "/v1/games/subnautica/mods/%d.json" modId |> makeRequest apiKey
 
         let jsonString =
             response.Content.ReadAsStringAsync()
@@ -77,9 +77,9 @@ module NexusApi =
         let options = JsonSerializerOptions(PropertyNameCaseInsensitive = true)
         JsonSerializer.Deserialize<NexusModInfo>(jsonString, options)
 
-    let getFiles (apiKey: string, modId: int) =
+    let getFiles (apiKey: string) (modId: int) =
         let response =
-            makeRequest (sprintf "/v1/games/subnautica/mods/%d/files.json" modId, apiKey)
+            modId |> sprintf "/v1/games/subnautica/mods/%d/files.json" |> makeRequest apiKey
 
         let jsonString =
             response.Content.ReadAsStringAsync()
@@ -89,9 +89,10 @@ module NexusApi =
         let options = JsonSerializerOptions(PropertyNameCaseInsensitive = true)
         JsonSerializer.Deserialize<NexusModFiles>(jsonString, options).files
 
-    let getFile (apiKey: string, modId: int, fileId: int) =
+    let getFile (apiKey: string) (modId: int) (fileId: int) =
         let response =
-            makeRequest (sprintf "/v1/games/subnautica/mods/%d/files/%d.json" modId fileId, apiKey)
+            sprintf "/v1/games/subnautica/mods/%d/files/%d.json" modId fileId
+            |> makeRequest apiKey
 
         let jsonString =
             response.Content.ReadAsStringAsync()
@@ -101,17 +102,16 @@ module NexusApi =
         let options = JsonSerializerOptions(PropertyNameCaseInsensitive = true)
         JsonSerializer.Deserialize<NexusModFile>(jsonString, options)
 
-    let getDownloadLink (apiKey: string, modId: int, fileId: int, expires: string, key: string) =
+    let getDownloadLink (apiKey: string) (modId: int) (fileId: int) (expires: string) (key: string) =
         let response =
-            makeRequest (
-                sprintf
-                    "/v1/games/subnautica/mods/%d/files/%d/download_link.json?key=%s&expires=%s"
-                    modId
-                    fileId
-                    key
-                    expires,
-                apiKey
-            )
+            sprintf
+                "/v1/games/subnautica/mods/%d/files/%d/download_link.json?key=%s&expires=%s"
+                modId
+                fileId
+                key
+                expires
+            |> makeRequest apiKey
+
 
         let jsonString =
             response.Content.ReadAsStringAsync()
@@ -121,7 +121,7 @@ module NexusApi =
         let options = JsonSerializerOptions(PropertyNameCaseInsensitive = true)
         JsonSerializer.Deserialize<NexusDownloadLink list>(jsonString, options).Head.URI
 
-    let downloadZipAsync (url: string, fileName: string) =
+    let downloadZipAsync (url: string) (fileName: string) =
         async {
             let cacheDir = Storage.getCacheDir ()
             Directory.CreateDirectory(cacheDir) |> ignore
