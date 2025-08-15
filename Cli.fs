@@ -32,6 +32,23 @@ module Cli =
                 for mxm in mods do
                     InstallMod.install (mxm)
 
+    module Init =
+        open System
+        open Argu
+
+        type InitArgs =
+            | [<Mandatory; MainCommand>] ApiKey of api_key: string
+
+            interface IArgParserTemplate with
+                member this.Usage =
+                    match this with
+                    | ApiKey _ -> "api key for nexus"
+
+        let run (args: ParseResults<InitArgs>) =
+            match args.TryGetResult <@ ApiKey @> with
+            | None -> raise (ArgumentException(message = "No api key specified", paramName = "api_key"))
+            | Some key -> Init.init (key)
+
     open System
     open Argu
 
@@ -39,15 +56,15 @@ module Cli =
 
     type CmdArgs =
         | [<AltCommandLine("-v")>] Version
-        | [<AltCommandLine("i"); CliPrefix(CliPrefix.None)>] Install of ParseResults<Install.InstallArgs>
-        | [<CliPrefix(CliPrefix.None)>] Init
+        | [<CliPrefix(CliPrefix.None); AltCommandLine("i")>] Install of ParseResults<Install.InstallArgs>
+        | [<CliPrefix(CliPrefix.None)>] Init of ParseResults<Init.InitArgs>
 
         interface IArgParserTemplate with
             member this.Usage =
                 match this with
                 | Version -> "display version information."
                 | Install _ -> "install mods"
-                | Init -> "initialize aqua"
+                | Init _ -> "initialize aqua"
 
     let private printVersion () = printfn "aqua v%s" application_version
 
@@ -71,7 +88,7 @@ module Cli =
             Install.run (p.GetResult(Install))
             0
         | p when p.Contains(Init) ->
-            Init.init ()
+            Init.run (p.GetResult(Init))
             0
         | _ ->
             printfn "%s" (parser.PrintUsage())

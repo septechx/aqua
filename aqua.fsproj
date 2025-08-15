@@ -5,6 +5,14 @@
     <TargetFramework>net9.0</TargetFramework>
     <ToolCommandName>aqua</ToolCommandName>
     <PackAsTool>true</PackAsTool>
+    <PackageIcon>assets/aqua_small.png</PackageIcon>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <Authors>septech</Authors>
+    <Description>A simple CLI tool for managing subnautica mods on linux.</Description>
+    <PackageProjectUrl>https://github.com/septechx/aqua</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/septechx/aqua</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -32,6 +40,9 @@
     <Content Include="appsettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="assets/**" Pack="true" PackagePath="assets" />
+    <None Include="LICENSE" Pack="true" PackagePath="" />
+    <None Include="README.md" Pack="true" PackagePath="" />
   </ItemGroup>
 
 </Project>
