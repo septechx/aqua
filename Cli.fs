@@ -20,9 +20,7 @@ module Cli =
             if not (File.Exists(Path.Combine(getStorageDir (), "config.json"))) then
                 failwith "No config file found. Please run `aqua init` first."
 
-            let aquaConfig =
-                Path.Combine(Storage.getStorageDir (), "config.json")
-                |> Storage.loadJsonData<AquaConfig>
+            let aquaConfig = AquaConfig.getConfig ()
 
             if not (Directory.Exists(Path.Combine(aquaConfig.game_path, "BepInEx"))) then
                 failwith "BepInEx is not installed. Please install BepInEx first."
