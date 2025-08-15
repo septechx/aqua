@@ -12,10 +12,10 @@ module ListMods =
             |> List.map (fun m ->
                 sprintf
                     "%s[v%s] %s%s"
-                    (if m.enabled then "\x1b[32m" else "\x1b[31m")
+                    (if m.enabled then Colors.green else Colors.red)
                     m.version
                     m.friendly_name
-                    "\x1b[0m")
+                    Colors.reset)
             |> List.sort
             |> String.concat "\n"
             |> printfn "%s"

@@ -11,7 +11,7 @@ Warning: Aqua is still in development and may not work as expected. Minor update
 
 - [x] Install mods from Nexus with a nxm link
 - [x] List mods
-- [ ] Check for updates
+- [x] Check for updates
 - [x] Disable mods
 - [x] Enable mods
 - [ ] Update mods

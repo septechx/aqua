@@ -64,5 +64,6 @@ module InstallMod =
               friendly_name = modInfo.name
               enabled = true
               source_path = modPath
-              destination_path = destPath } ]
+              destination_path = destPath
+              mod_id = parsedMxm.ModId.Value } ]
         |> Storage.saveJsonData modsFile

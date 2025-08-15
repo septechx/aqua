@@ -7,7 +7,7 @@ module NexusApi =
 
     let baseUrl = "https://api.nexusmods.com"
 
-    type NexusModInfo = { name: string }
+    type NexusModInfo = { name: string; version: string }
 
     type NexusModFile =
         { file_id: int

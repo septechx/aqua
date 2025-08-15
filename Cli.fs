@@ -99,6 +99,19 @@ module Cli =
                 for modName in modNames do
                     ToggleMod.disable (modName)
 
+    module CheckUpdates =
+        open Argu
+
+        type ListArgs =
+            | [<Hidden>] Z
+
+            interface IArgParserTemplate with
+                member this.Usage =
+                    match this with
+                    | _ -> ""
+
+        let run () = CheckUpdates.check ()
+
     open System
     open Argu
 
@@ -110,6 +123,7 @@ module Cli =
         | [<CliPrefix(CliPrefix.None); AltCommandLine("l")>] List of ParseResults<ListMods.ListArgs>
         | [<CliPrefix(CliPrefix.None); AltCommandLine("e")>] Enable of ParseResults<EnableMod.EnableArgs>
         | [<CliPrefix(CliPrefix.None); AltCommandLine("d")>] Disable of ParseResults<DisableMod.DisableArgs>
+        | [<CliPrefix(CliPrefix.None); AltCommandLine("u")>] Update of ParseResults<CheckUpdates.ListArgs>
         | [<CliPrefix(CliPrefix.None)>] Init of ParseResults<Init.InitArgs>
 
         interface IArgParserTemplate with
@@ -120,6 +134,7 @@ module Cli =
                 | List _ -> "list installed mods"
                 | Enable _ -> "enable mods"
                 | Disable _ -> "disable mods"
+                | Update _ -> "check for updates"
                 | Init _ -> "initialize aqua"
 
     let private printVersion () = printfn "aqua v%s" application_version
@@ -154,6 +169,9 @@ module Cli =
             0
         | p when p.Contains(Disable) ->
             DisableMod.run (p.GetResult(Disable))
+            0
+        | p when p.Contains(Update) ->
+            CheckUpdates.run ()
             0
         | _ ->
             printfn "%s" (parser.PrintUsage())

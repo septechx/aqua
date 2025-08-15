@@ -9,7 +9,8 @@ module AquaConfig =
           friendly_name: string
           enabled: bool
           source_path: string
-          destination_path: string }
+          destination_path: string
+          mod_id: int }
 
     type AquaConfig = { game_path: string; api_key: string }
 
