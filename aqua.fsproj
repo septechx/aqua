@@ -8,7 +8,7 @@
     <PackageIcon>assets/aqua_small.png</PackageIcon>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <Authors>septech</Authors>
-    <Description>A simple CLI tool for managing subnautica mods.</Description>
+    <Description>A simple CLI tool for managing subnautica 2.0+ mods.</Description>
     <PackageProjectUrl>https://github.com/septechx/aqua</PackageProjectUrl>
     <RepositoryUrl>https://github.com/septechx/aqua</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
