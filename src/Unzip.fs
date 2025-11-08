@@ -26,11 +26,14 @@ module Unzip =
         try
             ZipFile.ExtractToDirectory(zipPath, temp)
 
-            // TODO: Replace this with fuzzy search or something similar
+            // TODO: Replace this with something better
             let matches =
                 Directory.EnumerateDirectories(temp, "*", SearchOption.AllDirectories)
                 |> Seq.filter (fun dir ->
-                    Path.GetFileName(dir).StartsWith(dirName.Substring(0, 5), StringComparison.OrdinalIgnoreCase))
+                    Path
+                        .GetFileName(dir)
+                        .Replace(" ", "")
+                        .StartsWith(dirName.Substring(0, 5).Replace(" ", ""), StringComparison.OrdinalIgnoreCase))
                 |> Seq.toList
 
             match matches with
