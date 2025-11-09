@@ -6,7 +6,7 @@ module Init =
     open System.Text.RegularExpressions
     open AquaConfig
 
-    // Obtain the library path to no write a parser
+    // Obtain the library path without a parser
     let extractSteamPaths (vdfContent: string) =
         let pattern = @"^\s*""path""\s+""([^""]+)"""
 
