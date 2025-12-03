@@ -14,7 +14,7 @@ Aqua is a simple CLI tool for managing subnautica 2.0+ mods.
 - [x] Check for updates
 - [x] Disable mods
 - [x] Enable mods
-- [ ] Update mods
+- [ ] Automatically update mods
 - [ ] Automatically install BepInEx
 
 ## Installation
